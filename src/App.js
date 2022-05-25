@@ -1,25 +1,68 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import { Routes, Route } from "react-router-dom";
 
-function App() {
+import "./App.css";
+
+import axios from "axios";
+// import $ from "jquery";
+
+import CharacterView from "./components/CharacterView";
+import LocationView from "./components/LocationView";
+import HomeView from "./components/HomeView";
+
+const Location_url = "https://rickandmortyapi.com/api/location";
+
+const Characters_url = "https://rickandmortyapi.com/api/character";
+
+const App = () => {
+  const [characters, setCharacters] = useState([]);
+
+  const [locations, setLocations] = useState([]);
+
+  const getCharacters = async () => {
+    await axios
+      .get(Characters_url)
+      .then((response) => {
+        setCharacters(response.data.results);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const getLocations = async () => {
+    await axios
+      .get(Location_url)
+      .then((response) => {
+        setLocations(response.data.results);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    getCharacters();
+
+    getLocations();
+  }, []);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {/* routers */}
+      <Routes>
+        <Route path="/" element={<HomeView />} />
+        <Route
+          path="characters"
+          element={<CharacterView character={characters} />}
+        />
+        <Route
+          path="locations"
+          element={<LocationView location={locations} />}
+        />
+      </Routes>
     </div>
   );
-}
+};
 
 export default App;
